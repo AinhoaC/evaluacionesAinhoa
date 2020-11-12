@@ -1,9 +1,23 @@
+<?php
+
+    require_once "funciones.php";  
+    session_start();
+
+    if($_SESSION["idioma"] == 'es'){
+        $documento=simplexml_load_file("resources/es.xml");
+    }
+    else{
+        $documento=simplexml_load_file("resources/en.xml");
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Salida</title>
+    <title><?php echo $documento->Final->Titulo ?></title>
     <link rel="shortcut icon" href="#" />
     <!-- mi estilo -->
     <link rel="stylesheet" type="text/css" href="css/estilo.css">
@@ -20,14 +34,14 @@
 
 
     <div class="container text-center" style="margin-top: 15%;" >
-        <p>Muchas gracias por su participacion. </p>
-        <p>El proceso ha terminado con éxito.</p>
+        <p><?php echo $documento->Final->Gracias ?></p>
+        <p><?php echo $documento->Final->Proceso ?></p>
     </div>
 
     <div class="container">
        
         <div class="row justify-content-around">
-            <button class="boton" onclick="llevarPaginaIni();"> Salir            </button>
+            <button class="boton" onclick="llevarPaginaIni();"><?php echo $documento->Final->Salir ?></button>
         </div>
 
     </div>

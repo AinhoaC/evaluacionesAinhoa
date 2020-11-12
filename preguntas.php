@@ -3,6 +3,13 @@
     session_start();
     $conn=conexion();
     
+    if($_SESSION["idioma"] == 'es'){
+        $documento=simplexml_load_file("resources/es.xml");
+    }
+    else{
+        $documento=simplexml_load_file("resources/en.xml");
+    }
+
     //recuperamos los datos del usuario logeado
     if(isset($_SESSION['usuario'])){
         $usu = $_SESSION['usuario'];
@@ -13,7 +20,7 @@
 
     } else {
 
-      header('Location: index.html');    
+      header('Location: index.php');    
     }
 
 
@@ -26,7 +33,8 @@
            
 
     // COMPROBAMOS SI EL USUARIO HA RESPONDIDO ALGUNA PREGUNTA Y SI ES ASÍ LAS CARGAMOS EN PANTALLA
-    $query = mysqli_query( $conn, "SELECT idRespuestaEval, idEvaluacion, idPregunta, idUsuario, resultado FROM respuestaseval WHERE idUsuario = '$idUsu' ORDER BY idPregunta ASC");
+    //si es de tipo uno la cargamos
+    $query = mysqli_query( $conn, "SELECT idRespuestaEval, idEvaluacion, idPregunta, idUsuario, resultado FROM respuestaseval WHERE idUsuario = '$idUsu' AND idTipoProceso=1 ORDER BY idPregunta ASC");
     $numResult = mysqli_affected_rows( $conn );
 
 
@@ -69,8 +77,13 @@
     
 
     // cargamos la preguntas
-    $selectPreg = mysqli_query($conn, "SELECT idPregunta, descripcion FROM preguntas LIMIT $iNumPaginaCargar, $num_per_page");
-
+    if($_SESSION['idioma'] == 'es'){
+       $selectPreg = mysqli_query($conn, "SELECT idPregunta, descripcion FROM preguntas LIMIT $iNumPaginaCargar, $num_per_page");
+    }
+    else{
+        $selectPreg = mysqli_query($conn, "SELECT idPregunta, descripcion_en FROM preguntas LIMIT $iNumPaginaCargar, $num_per_page");
+    }
+   
 
     //PAGINAR HACIA ADELANTE PROVOCA ACTUALIZAR LOS REGISTROS. DELETE Y UPDATE
     if (isset ($_POST['txtActualizar']) && ($_POST['txtActualizar']!="") ){  
@@ -129,28 +142,15 @@
             if ($iPaginaActual>=6){
 //printf("<br>Entramos por última página " . $iNumPaginaCargar);         
                 // actualizamos el estado a finalizar de la evaluacion del usuario 
-                
-                // Comprobar que NO pueda haber respuestas con valor 0 en la tabla de respuestaseval para este usuario y evaluación
-                $consultaUsuEval = mysqli_query($conn, "SELECT count(*) as TotalRegistros FROM `respuestaseval` WHERE idEvaluacion = $idEval and idUsuario = $idUsu and resultado = 0");
-                
-                $data = mysqli_fetch_array( $consultaUsuEval );        
+                $actualizarUsuEval = "UPDATE estadosevaluaciones SET idEstado = 3 WHERE idUsuario = $idUsu ";
 
-                if ( $data[0] == 0 ) {
-                    
-                    $actualizarUsuEval = "UPDATE estadosevaluaciones SET idEstado = 3 WHERE idUsuario = $idUsu ";
+                $updateUsuEval = mysqli_query($conn, $actualizarUsuEval);
 
-                    $updateUsuEval = mysqli_query($conn, $actualizarUsuEval);
-
-                    if ( $updateUsuEval != 0 ){
-                        header('Location: final.html');
-                    } else {
-                        echo "Error: " . $updateUsuEval . "<br>" . $conn->error;
-                    }     
+                if ( $updateUsuEval != 0 ){
+                    header('Location: final.php');
                 } else {
-                    echo '<script type="text/javascript"> alert("Compruebe que todas las preguntas han sido respondidas adecuadamente."); </script> ';
-                    header('Location: preguntas.php');
-                    
-                }
+                    echo "Error: " . $updateUsuEval . "<br>" . $conn->error;
+                }     
 
             }
         }  
@@ -169,7 +169,7 @@
 
 <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         
     <!-- Bootstrap CSS -->
@@ -177,7 +177,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     
     <link rel="stylesheet" href="css/estilo.css">
-    <title> FeedBack 360 </title>
+    <title><?php echo $documento->Preguntas->Titulo ?></title>
 
     <!-- icono de la pantalla-->
     <link rel="shortcut icon" href="img/favicon.ico" />
@@ -223,10 +223,6 @@
             }
 
             if(iContRespondidas==10){
-                if(iContPreg<60){
-                        document.getElementById('btnSiguiente').style.display = 'none';
-                        document.getElementById('btnAtras').style.display = 'none';
-                    }
                 return true;
             } else { 
                 return false;
@@ -273,14 +269,14 @@
                                 <input id="radioP'.$cont.'V1" name="radioP'.$cont.'" value="1" class="radio-custom input-group-field"  type="radio" ';
                                 if ($campoValorRes[$cont] == 1){echo ' checked ';}
                                 echo '>';
-                                echo '<label for="radioP'.$cont.'V1"  class="radio-custom-label"> Muy bajo </label>
+                                echo '<label for="radioP'.$cont.'V1"  class="radio-custom-label">'.$documento->Preguntas->Nunca.' </label>
                             </div>
                         </div>                        <div class="text-group-field ">
                             <div class="inner-block">                
                                 <input id="radioP'.$cont.'V2" name="radioP'.$cont.'" value="2" class="radio-custom input-group-field"  type="radio" ';
                                 if ($campoValorRes[$cont] == 2){echo ' checked ';}
                                 echo '>';
-                                echo '<label for="radioP'.$cont.'V2"  class="radio-custom-label"> Bajo </label>
+                                echo '<label for="radioP'.$cont.'V2"  class="radio-custom-label">'.$documento->Preguntas->Poco.' </label>
                             </div>
                         </div>
 
@@ -289,7 +285,7 @@
                                 <input id="radioP'.$cont.'V3" name="radioP'.$cont.'"  value="3" class="radio-custom input-group-field"  type="radio" ';
                                 if ($campoValorRes[$cont] == 3){echo ' checked ';}
                                 echo '>';
-                                echo ' <label for="radioP'.$cont.'V3"  class="radio-custom-label"> Normal </label>
+                                echo ' <label for="radioP'.$cont.'V3"  class="radio-custom-label">'.$documento->Preguntas->Aveces.' </label>
                             </div>
                         </div>
 
@@ -299,7 +295,7 @@
                                 <input id="radioP'.$cont.'V4" name="radioP'.$cont.'" value="4" class="radio-custom input-group-field"  type="radio" ';
                                 if ($campoValorRes[$cont] == 4){echo ' checked ';}
                                 echo '>';
-                                echo '<label for="radioP'.$cont.'V4"  class="radio-custom-label"> Destaca </label>
+                                echo '<label for="radioP'.$cont.'V4"  class="radio-custom-label">'.$documento->Preguntas->CasiSiempre.' </label>
                             </div>
                         </div>
 
@@ -308,7 +304,7 @@
                                 <input id="radioP'.$cont.'V5" name="radioP'.$cont.'" value="5" class="radio-custom input-group-field"  type="radio" ';
                                 if ($campoValorRes[$cont] == 5){echo ' checked ';}
                                 echo '>';
-                                echo '<label for="radioP'.$cont.'V5"  class="radio-custom-label text-center"> Excelente </label>
+                                echo '<label for="radioP'.$cont.'V5"  class="radio-custom-label text-center">'.$documento->Preguntas->Siempre.' </label>
                             </div>
                         </div>
                     </div>';
@@ -323,11 +319,10 @@
                 $pr_result = mysqli_query($conn, $pr_query);
                 $total_records = mysqli_num_rows($pr_result);       //echo $total_records;
                 $total_page = ceil($total_records/$num_per_page) -1;  // echo $total_page;
-                echo '<input class="botonP" type="button" id="btnAtras" name="btnAtras" onclick="Paginar(-1)" value="ATRAS"';
-                if ( $iPaginaActual == 0 ) {
-                     echo ' style="display:none"';
+
+                if ( $iPaginaActual > 0 ) {
+                     echo '<input class="botonP" type="button" id="btnAtras" name="btnAtras" onclick="Paginar(-1)" value="'.$documento->Preguntas->Atras.'">';
                 } 
-                echo '>';
 
                 for ($i = 1; $i < $total_page; $i++ ) {
                     //echo "<a class='btn btn-primary' href='preguntas.php?page=".$i."'>$i </a>";
@@ -335,11 +330,11 @@
 
                 if  ( $i > $iPaginaActual ) {
                     //echo "<a type='submit' name='pagSiguiente' class='botonP' href='preguntas.php?page=".($page + 1)."'> Siguiente </a>";
-                    echo '<input class="botonP" type="button" id="btnSiguiente" name="btnSiguiente" onclick="Paginar(1)" value="SIGUIENTE">';
+                    echo '<input class="botonP" type="button" id="btnSiguiente" name="btnSiguiente" onclick="Paginar(1)" value="'.$documento->Preguntas->Siguiente.'">';
 
                 } elseif ($i == $total_page ) {
-                    //25/10/2020 --> hay que comprobar que ha respondido a todas las preguntas y llevar a la pagina ---> "final.html"
-                    echo '<input class="botonP" type="button" id="btnFinalizar" name="btnFinalizar" onclick="Paginar(1)" value="FINALIZAR">';  
+                    //25/10/2020 --> hay que comprobar que ha respondido a todas las preguntas y llevar a la pagina ---> "final.php"
+                    echo '<input class="botonP" type="button" id="btnFinalizar" name="btnFinalizar" onclick="Paginar(1)" value="'.$documento->Preguntas->Finalizar.'">';  
                 }      
             ?>
         </div>

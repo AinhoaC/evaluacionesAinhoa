@@ -2,6 +2,13 @@
   require_once "funciones.php";  
   session_start();
 
+    if($_SESSION["idioma"] == 'es'){
+        $documento=simplexml_load_file("resources/es.xml");
+    }
+    else{
+        $documento=simplexml_load_file("resources/en.xml");
+    }
+
     if(isset($_SESSION['usuario'])){
         $usu = $_SESSION['usuario'];
         $nombreUsu = $_SESSION['nombre'];
@@ -16,7 +23,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title> Document</title>
+    <title><?php echo $documento->Bienvenido->Titulo ?></title>
     <link rel="shortcut icon" href="#" />
     <!-- mi estilo -->
     <link rel="stylesheet" type="text/css" href="css/estilo.css">
@@ -31,13 +38,13 @@
     <div id="marcoBienvenido">
         <div class="container ">
 
-            <span class="bienvenido">Bienvenido al feedback 360 de </span>
+            <span class="bienvenido"><?php echo $documento->Bienvenido->BienvenidoSpan ?></span>
             <h4><?php echo $_SESSION["nombreAutoeval"]; ?> </h4>
            
-            <p>Agradecemos que realice el siguiente cuestionario repondiendo con total honestidad.</p>
-            <p>Tenga en cuenta que, para pasar de página, es necesario contestar a todas las preguntas.</p>
+            <p><?php echo $documento->Bienvenido->Agradecimiento ?></p>
+            <p><?php echo $documento->Bienvenido->Aviso ?></p>
             
-            <button class="btnIniciar" onclick="llevarPaginaPreg();"> Iniciar </button>       
+            <button class="btnIniciar" onclick="llevarPaginaPreg();"> <?php echo $documento->Bienvenido->Iniciar ?> </button>       
 
         </div>
     </div>   

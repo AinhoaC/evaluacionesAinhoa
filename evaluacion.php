@@ -3,17 +3,23 @@ require_once "funciones.php";
 
 session_start();
 
+if($_SESSION["idioma"] == 'es'){
+    $documento=simplexml_load_file("resources/es.xml");
+}
+else{
+    $documento=simplexml_load_file("resources/en.xml");
+}
+
 if ( isset( $_SESSION['usuario'] ) ) {
     $usu = $_SESSION['usuario'];
     $idUsuario = $_SESSION['idUsuario'];
 } else {
 
-    header('Location: index.html');    
+    header('Location: index.php');    
 }
 
 $conn = conexion();
-
-
+$idTipoProceso=$_SESSION['idTipoProceso'];
 $campoNombreEmpresa = "";
 $campoFechaDesde =  "";
 $campoFechaHasta =  "";
@@ -217,10 +223,10 @@ if ( isset( $_POST['guardar']) || isset($_POST['actualizar']) ) {
     $evaluacion = $_POST['inputEvaluacion'];
     $empresa = $_POST['inputEmpresa'];
     $fecha_actual = date("Y-m-d");
-    $fDesde = date( 'Y-m-d', strtotime( $_POST['inputDateDesde'] ) );
-    $fHasta = date( 'Y-m-d', strtotime( $_POST['inputDateHasta'] ) );
+    $fDesde = formatear_fecha(strtotime( $_POST['inputDateDesde'] ));
+    $fHasta = formatear_fecha(strtotime( $_POST['inputDateHasta'] ));
     $numEval = str_split( $evaluacion, 3 );
-	
+    
     if ( $fDesde != "1970-01-01" ) {
         
         if($fecha_actual >= $fDesde){
@@ -248,15 +254,15 @@ if ( isset( $_POST['guardar']) || isset($_POST['actualizar']) ) {
     if (isset( $_POST['actualizar'])) {
         
          // query que actualiza la evaluacion
-            $query = "UPDATE evaluaciones SET idTipoProceso=1, codEvaluacion='$evaluacion', nombreEmpresa='$empresa', idEstadoEval = '$estadoEvaluacion', ";
+            $query = "UPDATE evaluaciones SET idTipoProceso=$idTipoProceso, codEvaluacion='$evaluacion', nombreEmpresa='$empresa', idEstadoEval = '$estadoEvaluacion', ";
 
-            if ($fDesde == date( 'Y-m-d', strtotime("1970-01-01")) ) {
+            if ($fDesde == formatear_fecha(strtotime("1970-01-01"))) {
                $query .= "fechaDesde = null, ";
             }else{
                 $query .= "fechaDesde='" . $fDesde . "', ";
             }
 
-            if ($fHasta == date( 'Y-m-d', strtotime("1970-01-01")) ) {
+            if ($fHasta == formatear_fecha(strtotime("1970-01-01"))) {
                $query .= "fechaHasta = null ";
             }else{
                 $query .= "fechaHasta='" . $fHasta . "' ";
@@ -274,15 +280,15 @@ if ( isset( $_POST['guardar']) || isset($_POST['actualizar']) ) {
     }else{
     
             // query que inserta la nueva evaluacion
-            $query = "INSERT INTO evaluaciones(idEvaluacion, idTipoProceso, codEvaluacion, cifEmpresa, nombreEmpresa, idEstadoEval, fechaDesde, fechaHasta ) VALUES ('$numEval[1]', 1,'$evaluacion', null, '$empresa', $estadoEvaluacion, ";
+            $query = "INSERT INTO evaluaciones(idEvaluacion, idTipoProceso, codEvaluacion, cifEmpresa, nombreEmpresa, idEstadoEval, fechaDesde, fechaHasta ) VALUES ('$numEval[1]', $idTipoProceso,'$evaluacion', null, '$empresa', $estadoEvaluacion, ";
 
-            if ($fDesde == date( 'Y-m-d', strtotime("1970-01-01")) ) {
+            if ($fDesde == formatear_fecha(strtotime("1970-01-01"))) {
                $query .= "null, ";
             }else{
                 $query .= "'" . $fDesde . "', ";
             }
 
-            if ($fHasta == date( 'Y-m-d', strtotime("1970-01-01")) ) {
+            if ($fHasta == formatear_fecha(strtotime("1970-01-01"))) {
                $query .= "null)";
             }else{
                 $query .= "'" . $fHasta . "')";
@@ -322,7 +328,7 @@ if ( isset( $_POST['guardar']) || isset($_POST['actualizar']) ) {
                 INNER JOIN estadosevaluaciones on estadosevaluaciones.idUsuario =  respuestaseval.idUsuario
                 INNER join preguntas on preguntas.idPregunta = respuestaseval.idPregunta
                 WHERE respuestaseval.idEvaluacion = $evaluacion
-                AND preguntas.idTipoProceso = 1
+                AND preguntas.idTipoProceso = $idTipoProceso
                 AND estadosevaluaciones.idEstado = 3
                 ORDER BY respuestaseval.idEvaluacion, usuarios.idUsuario, usuarios.rolUsu, preguntas.categoria, preguntas.subCategoria, respuestaseval.idPregunta ASC");
         
@@ -411,6 +417,7 @@ if ( isset( $_POST['guardar']) || isset($_POST['actualizar']) ) {
             $CadenaJSON = str_replace("'", '"', $CadenaJSON);
         
 //printf("<br> Cadena JSON: " . $CadenaJSON);
+// SE COMENTA PARA SUBIR A PROD. TEMPORALMENTE
           
             $archivo = fopen($_SESSION["GeneradorInforme"], "w+");
            
@@ -419,7 +426,9 @@ if ( isset( $_POST['guardar']) || isset($_POST['actualizar']) ) {
             $cadena = file_get_contents($_SESSION["GeneradorInforme"]);
             
             $cadena .= $CadenaJSON;
-
+           /* echo "<pre>";
+            printf($cadena);
+            echo "</pre>";*/
             file_put_contents($_SESSION["GeneradorInforme"], $cadena);
             
             fflush($archivo); // forzamos a que escriba los valores
@@ -439,13 +448,12 @@ if ( isset( $_POST['guardar']) || isset($_POST['actualizar']) ) {
    
     echo '<script type="text/javascript">
             
+                    setTimeout(function(){ window.open("'; echo   $_SESSION["RutaInformeExpuesto"]  . $rutaCompleta; echo '") }, 4000);
                 
-            setTimeout(function(){ window.open("'; echo   $_SESSION["RutaInformeExpuesto"]  . $rutaCompleta; echo '") }, 5000);
-            setTimeout(window.alert("Informe generado correctamente.\nEspere unos segundos antes de pulsar aceptar para descargarlo."), 3000);
-            
-            window.location.href="sarrera.php";
+                    window.alert("Informe generado correctamente")
+                    window.location.href="sarrera.php";
 
-        </script>';
+           </script>';
 
             
         } else {            
@@ -518,10 +526,10 @@ if ( isset( $_POST['consulta'] ) ) {
 
 <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title> FeedBack 360 </title>
+    <title><?php echo $documento->Evaluacion->Titulo ?></title>
     <!-- icono de la pantalla-->
     <link rel="shortcut icon" href="#" />
     <!-- mi estilo -->
@@ -536,26 +544,32 @@ if ( isset( $_POST['consulta'] ) ) {
     <!-- incluir menu -->
     <?php include 'menu.php'?>
     <div class="container-fluid">
-        <h1>Nueva Evaluación</h1> <br>
+        <?php if($_SESSION['idTipoProceso']==1){
+            echo "<h1>".$documento->Evaluacion->TituloDirectiva."</h1> <br>";
+        }
+        else{
+            echo "<h1>".$documento->Evaluacion->TituloTecnica."</h1> <br>";
+        }
+        ?>
         <form method="post">
             <div class="row justify-content-around">
                 <div class="form-group col-sx-3">
-                    <strong> <label for="inputEvaluacion">Evaluación:</label> </strong>
+                    <strong> <label for="inputEvaluacion"><?php echo $documento->Evaluacion->Evaluacion ?></label> </strong>
                     <input type="text" class="form-control" id="inputEvaluacion" name="inputEvaluacion" placeholder="Evaluación" maxlength="5" value="<?php echo $campoCodEvaluacion; ?>" readonly>
                 </div>
                 <div class="form-group col-sx-3">
-                    <strong> <label for="inputDateDesde">Fecha Desde:</label> </strong>
+                    <strong> <label for="inputDateDesde"><?php echo $documento->Evaluacion->FechaDesde ?></label> </strong>
                     <input type="date" class="form-control" id="inputDateDesde" name="inputDateDesde" value="<?php echo $campoFechaDesde; ?>" required>
                 </div>
             </div>
             <!-- fila 2 -->
             <div class="row justify-content-around">
                 <div class="form-group col-sx-3">
-                    <strong> <label for="inputEmpresa">Empresa: </label> </strong>
-                    <input type="text" class="form-control" id="inputEmpresa" name="inputEmpresa" placeholder="Nombre empresa" maxlength="25" value="<?php echo $campoNombreEmpresa; ?>" required>
+                    <strong> <label for="inputEmpresa"><?php echo $documento->Evaluacion->Empresa ?></label> </strong>
+                    <input type="text" class="form-control" id="inputEmpresa" name="inputEmpresa" placeholder="<?php echo $documento->Evaluacion->NombreEmpresa ?>" maxlength="25" value="<?php echo $campoNombreEmpresa; ?>" required>
                 </div>
                 <div class="form-group col-sx-3">
-                    <strong> <label for="inputDateHasta">Fecha Hasta: </label> </strong>
+                    <strong> <label for="inputDateHasta"><?php echo $documento->Evaluacion->FechaHasta ?></label> </strong>
                     <input type="date" class="form-control" id="inputDateHasta" name="inputDateHasta" onblur="comprobarFechas();" value="<?php echo $campoFechaHasta; ?>">
                 </div>
             </div> <br>
@@ -564,12 +578,12 @@ if ( isset( $_POST['consulta'] ) ) {
                     <thead>
                         <tr>
                             <th scope="col" style="width:2%"> </th>
-                            <th scope="col" style="width:23%"> Nombre y Apellido</th>
-                            <th scope="col" style="width:23%"> Mail </th>
-                            <th scope="col" style="width:15%"> Rol </th>
-                            <th scope="col" style="width:12%"> Usuario </th>
-                            <th scope="col" style="width:12%"> Contraseña </th>
-                            <th scope="col" style="width:10%"> Enviar mail</th>
+                            <th scope="col" style="width:23%"> <?php echo $documento->Evaluacion->NombreApellido ?></th>
+                            <th scope="col" style="width:23%"> <?php echo $documento->Evaluacion->Mail ?> </th>
+                            <th scope="col" style="width:15%"> <?php echo $documento->Evaluacion->Rol ?> </th>
+                            <th scope="col" style="width:12%"> <?php echo $documento->Evaluacion->Usuario ?> </th>
+                            <th scope="col" style="width:12%"> <?php echo $documento->Evaluacion->Contrasena ?> </th>
+                            <th scope="col" style="width:10%"> <?php echo $documento->Evaluacion->EnviarMail ?></th>
                             <?php 
                             if ( isset( $_POST['consulta'] )  ) {
                                 echo '<th scope="col"> Estado </th>';
@@ -639,9 +653,9 @@ if ( isset( $_POST['consulta'] ) ) {
                 <!-- BOTON DE ACTUALIZAR -->
                 <div class="container-fluid">
                     <div class="form-group ">
-                        <input class="boton" id="actualizar" type="submit" name="actualizar" value="ACTUALIZAR" title="Actualizar información">
+                        <input class="boton" id="actualizar" type="submit" name="actualizar" value="<?php echo $documento->Evaluacion->NombreApellido ?>" title="Actualizar información">
             
-                        <input class="boton" id="informe" type="submit" name="informe" value="INFORME y CIERRE" title="Generar informe y cerrar la evaluación">
+                        <input class="boton" id="informe" type="submit" name="informe" value="<?php echo $documento->Evaluacion->InformeCierre ?>" title="Generar informe y cerrar la evaluación">
                     </div>
                 </div>
 
@@ -650,7 +664,7 @@ if ( isset( $_POST['consulta'] ) ) {
                 <!-- BOTON DE GUARDAR -->
                 <div class="container-fluid">
                     <div class="form-group ">
-                        <input class="boton" id="guardar" type="submit" name="guardar" value="GUARDAR">
+                        <input class="boton" id="guardar" type="submit" name="guardar" value="<?php echo $documento->Evaluacion->Guardar ?>">
                     </div>
                 </div>
 
@@ -662,7 +676,7 @@ if ( isset( $_POST['consulta'] ) ) {
 
     <!-- ####################################################################################### -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="js/miscript.js"></script>

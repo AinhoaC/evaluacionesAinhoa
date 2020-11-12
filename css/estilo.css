@@ -15,7 +15,24 @@
 /*******************************/
 /***  PAGINA -- SARRERA  ***/
 
+.iconos_paises {
+    width:90%;
+}
 
+.div_iconos {
+    float:right;
+    width:10%;
+    display:inline-flex;
+    margin-right: -3%;
+}
+.boton_paises {
+    margin-top: 5%;
+    width: 30%;
+    height: 50%;
+    border-color: transparent;
+    background-color: transparent;
+    padding:0%;
+}
 
 h2.tituloSarrera {
     width: 355px;
@@ -90,7 +107,7 @@ span.bienvenido {
     text-align: center;
     position: relative;
     right: -135%;
-    margin-top: 50%;
+    margin-top: 40%;
     margin-right: 60px;
     margin-left: 30px;
 }

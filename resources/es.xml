@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Documento>
+	<Login>
+		<Titulo1>FeedBack 360º</Titulo1>
+		<Titulo>  Feedback 360º - Iniciar Sesión </Titulo>
+		<Usuario> Introduzca Usuario: </Usuario>
+		<Idioma>  Introduzca Idioma: </Idioma>
+		<Contrasena>  Contraseña: </Contrasena>
+		<OptionEspanol>Español</OptionEspanol>
+		<OptionIngles>Inglés</OptionIngles>
+		<Login1>Acceder</Login1>
+	</Login>
+	<Menu>
+		<Mantenimiento> Mantenimiento Preguntas </Mantenimiento>
+		<Consulta> Consulta Evaluaciones </Consulta>
+		<Nueva1> Nueva Evaluación Directiva </Nueva1>
+		<Nueva2> Nueva Evaluación Tecnica </Nueva2>
+		<Es>ES</Es>
+		<En>EN</En>
+		<TooltipEs>Español</TooltipEs>
+		<TooltipEn>Ingles</TooltipEn>
+		<Cerrar> Cerrar Sesión </Cerrar>
+	</Menu>
+	<Sarrera>
+		<Bienvenida>Bienvenida</Bienvenida>
+		<Mantenimiento> MANTENIMIENTO PREGUNTAS </Mantenimiento>
+		<Consulta> CONSULTA EVALUACIONES </Consulta>
+		<Nueva> NUEVA EVALUACIÓN </Nueva>
+		<TituloSarrera>Panel de Administración</TituloSarrera>
+		<SubTarea>Seleccione tarea a realizar</SubTarea>
+	</Sarrera>
+	<ConsultaEval>
+		<Titulo> Consulta Evaluación </Titulo>
+		<Titulo2>Consulta Evaluaciones</Titulo2>
+		<Empresa>Empresa:</Empresa>
+		<Estado>Estado:</Estado>
+		<Proceso>Proceso:</Proceso>
+		<Todas>Todas</Todas>
+		<Buscar>BUSCAR</Buscar>
+		<FechaDesde>Fecha desde:</FechaDesde>
+		<FechaHasta>Fecha hasta:</FechaHasta>
+	</ConsultaEval>
+	<ConsultaPreg>
+		<Titulo>Documento</Titulo>
+		<Titulo2>Preguntas</Titulo2>
+		<Plantilla> Plantilla informe: </Plantilla>
+		<Preguntas>Preguntas: </Preguntas>
+		<Proceso>Proceso: </Proceso>
+		<Guardar>GUARDAR</Guardar>
+		<Pregunta>Pregunta </Pregunta>
+	</ConsultaPreg>
+	<Evaluacion>
+		<Titulo> FeedBack 360 </Titulo>
+		<TituloDirectiva>Nueva Evaluación Directiva</TituloDirectiva>
+		<TituloTecnica>Nueva Evaluación Tecnica</TituloTecnica>
+		<Evaluacion>Evaluación:</Evaluacion>
+		<FechaDesde>Fecha Desde:</FechaDesde>
+		<Empresa>Empresa: </Empresa>
+		<NombreEmpresa>Nombre empresa</NombreEmpresa>
+		<FechaHasta>Fecha Hasta: </FechaHasta>
+		<NombreApellido>Nombre y Apellido</NombreApellido>
+		<Mail> Mail </Mail>
+		<Rol> Rol </Rol>
+		<Usuario> Usuario </Usuario>
+		<Contrasena> Contraseña </Contrasena>
+		<EnviarMail> Enviar mail</EnviarMail>
+		<Actualizar>ACTUALIZAR</Actualizar>
+		<InformeCierre>INFORME y CIERRE</InformeCierre>
+		<Guardar>GUARDAR</Guardar>
+	</Evaluacion>
+	<Final>
+		<Titulo>Salida</Titulo>
+		<Gracias>Muchas gracias por su participacion. </Gracias>
+		<Proceso>El proceso ha terminado con éxito.</Proceso>	
+		<Salir> Salir            </Salir>
+	</Final>
+	<Preguntas>
+		<Titulo> FeedBack 360 </Titulo>
+		<Nunca> Nunca </Nunca>
+		<Poco> Pocas veces </Poco>
+		<Aveces> A veces </Aveces>
+		<CasiSiempre> Casi siempre </CasiSiempre>
+		<Siempre> Siempre </Siempre> 
+		<Atras>ATRAS</Atras>
+		<Siguiente>SIGUIENTE</Siguiente>
+		<Finalizar>FINALIZAR</Finalizar>
+	</Preguntas>
+	<Bienvenido>
+		<Titulo>Documento</Titulo>
+		<BienvenidoSpan>Bienvenido al feedback 360° de </BienvenidoSpan>
+		<Agradecimiento>Agradecemos que realice el siguiente cuestionario repondiendo con total honestidad.</Agradecimiento>
+		<Aviso>Tenga en cuenta que, para pasar de página, es necesario contestar a todas las preguntas.</Aviso>
+		<Iniciar>Iniciar</Iniciar>
+	</Bienvenido>
+	<Archivo>
+		<Texto>Descargar archivo csv</Texto>	
+	</Archivo>
+</Documento>

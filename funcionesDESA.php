@@ -32,9 +32,6 @@ function InicializarParametros(){
 
 }
 
-
-
-
 function conexion () {
 
     //$conn = new mysqli( 'localhost', 'root', '', 'feedback' );
@@ -113,7 +110,7 @@ function login ( $conn, $usu, $pass ) {
                     } else {
                         echo'<script type="text/javascript">               
                                 alert("La evaluacion ha sido finalizada");  
-                                window.location.href="index.html";  
+                                window.location.href="index.php";  
                             </script>';   
                     }     
 
@@ -124,7 +121,7 @@ function login ( $conn, $usu, $pass ) {
             } else{
                 echo'<script type="text/javascript">                
                         alert("El usuario ya ha completado la evaluación.");  
-                        window.location.href="index.html";  
+                        window.location.href="index.php";  
                     </script>'; 
             }
             
@@ -134,7 +131,7 @@ function login ( $conn, $usu, $pass ) {
         } else{
             echo'<script type="text/javascript">                
                     alert("El usuario no existe en estos momentos, intentelo más adelante.");  
-                    window.location.href="index.html";  
+                    window.location.href="index.php";  
                 </script>';       
 
 
@@ -143,10 +140,57 @@ function login ( $conn, $usu, $pass ) {
 
         echo'<script type="text/javascript">                
                 alert("Usuario / Password incorrecto.");  
-                window.location.href="index.html";  
+                window.location.href="index.php";  
             </script>';       
 
     }//CIERRE IF $filas
 } //cierre function login
 
-?>
+function formatear_fecha($fecha){
+    $fecha_nueva= date( 'Y-m-d', $fecha );
+    return $fecha_nueva;
+}
+
+
+function cargaEstados ( $conn ) {
+
+    $sql = mysqli_query( $conn, "SELECT idEstado, nombreEstado FROM estados" );
+
+    $filas = mysqli_num_rows( $sql );
+
+    if ( $filas != 0 ) {
+        echo '<option value="0" > Todas </option>';
+        while( $data = mysqli_fetch_array( $sql ) ) {
+           echo '<option id="inputEstado"  value="'; echo $data[0]; echo '">' ; printf( $data[1] ); '</option>';   
+        } // CIERRE WHILE       
+        
+    } else {
+        echo '<script type="text/javascript">alert("Error al obtener los estados");</script>';
+    }//CIERRE IF
+}
+
+function cargaProcesos ($conn ){
+    $sql= mysqli_query($conn, "SELECT idTipoProceso,nombreProc from tipoprocesos");
+    $filas = mysqli_num_rows( $sql );
+    if($filas != 0 ){
+        while( $data = mysqli_fetch_array( $sql ) ) {
+            echo '<option id="inputProceso"  value="'; echo $data[0]; echo '">' ; printf( $data[1] ); '</option>';
+        }
+    }
+}
+
+/*function formatear_nombre($nombre){
+
+    $array_nombre= str_split($nombre);
+    for($i=0;$i < count($array_nombre);$i=$i+1){
+        if($array_nombre[$i] == )
+    }
+    if($nombre){
+
+    }
+    else{
+
+    }
+    return $nombre_nuevo
+}
+*/

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Documento>
+	<Login>
+		<Titulo1>FeedBack 360º</Titulo1>
+		<Titulo>  Feedback 360º - Log In </Titulo>
+		<Usuario> Insert User: </Usuario>
+		<Idioma>  Insert Lenguage: </Idioma>
+		<Contrasena>  Password: </Contrasena>
+		<OptionEspanol>Spanish</OptionEspanol>
+		<OptionIngles>English</OptionIngles>
+		<Login1>Access</Login1>
+	</Login>
+	<Menu>
+		<Mantenimiento> Question Maintenance </Mantenimiento>
+		<Consulta> Evaluation Consultation </Consulta>
+		<Nueva1> New Directive Evaluation </Nueva1>
+		<Nueva2> New Technique Evaluation </Nueva2>
+		<Es>ES</Es>
+		<En>EN</En>
+		<TooltipEs>Spanish</TooltipEs>
+		<TooltipEn>English</TooltipEn>
+		<Cerrar> Close Session </Cerrar>
+	</Menu>
+	<Sarrera>
+		<Bienvenida>Welcome</Bienvenida>
+		<Mantenimiento> QUESTION MAINTENANCE </Mantenimiento>
+		<Consulta> EVALUATION CONSULTATION </Consulta>
+		<Nueva> NEW EVALUATION </Nueva>
+		<TituloSarrera>Administration Panel</TituloSarrera>
+		<SubTarea>Choose a task</SubTarea>
+	</Sarrera>
+	<ConsultaEval>
+		<Titulo> Evaluation Consultation </Titulo>
+		<Titulo2>Evaluation Consultation</Titulo2>
+		<Empresa>Company:</Empresa>
+		<Estado>State:</Estado>
+		<Proceso>Process:</Proceso>
+		<Todas>All</Todas>
+		<Buscar>SEARCH</Buscar>
+		<FechaDesde>Date From:</FechaDesde>
+		<FechaHasta>Date To:</FechaHasta>
+	</ConsultaEval>
+	<ConsultaPreg>
+		<Titulo>Document</Titulo>
+		<Titulo2>Questions</Titulo2>
+		<Plantilla> Report Template: </Plantilla>
+		<Preguntas>Questions: </Preguntas>
+		<Proceso>Process: </Proceso>
+		<Guardar>SAVE</Guardar>
+		<Pregunta>Question </Pregunta>
+	</ConsultaPreg>
+	<Evaluacion>
+		<Titulo> FeedBack 360 </Titulo>
+		<TituloDirectiva>New Directive Evaluation</TituloDirectiva>
+		<TituloTecnica>New Technic Evaluation</TituloTecnica>
+		<Evaluacion>Evaluation:</Evaluacion>
+		<FechaDesde>Date From:</FechaDesde>
+		<Empresa>Company: </Empresa>
+		<NombreEmpresa>Company Name</NombreEmpresa>
+		<FechaHasta>Date To: </FechaHasta>
+		<NombreApellido>Name and Lastname</NombreApellido>
+		<Mail> Mail </Mail>
+		<Rol> Role </Rol>
+		<Usuario> User </Usuario>
+		<Contrasena> Password </Contrasena>
+		<EnviarMail> Send mail</EnviarMail>
+		<Actualizar>UPDATE</Actualizar>
+		<InformeCierre>REPORT AND CLOSE</InformeCierre>
+		<Guardar>SAVE</Guardar>
+	</Evaluacion>
+	<Final>
+		<Titulo>Exit</Titulo>
+		<Gracias>Thank you for your participation. </Gracias>
+		<Proceso>The process has finished succesfully.</Proceso>	
+		<Salir> Exit            </Salir>
+	</Final>
+	<Preguntas>
+		<Titulo> FeedBack 360 </Titulo>
+		<Nunca> Never </Nunca>
+		<Poco> Few Times </Poco>
+		<Aveces> Sometimes </Aveces>
+		<CasiSiempre> Almost always </CasiSiempre>
+		<Siempre> Always </Siempre> 
+		<Atras>BACK</Atras>
+		<Siguiente>NEXT</Siguiente>
+		<Finalizar>FINISH</Finalizar>
+	</Preguntas>
+	<Bienvenido>
+		<Titulo>Document</Titulo>
+		<BienvenidoSpan>Welcome to feedback 360° of </BienvenidoSpan>
+		<Agradecimiento>We thank you for doing the following questionary and answering it with total honesty.</Agradecimiento>
+		<Aviso>Consider that in order to continue to the next page, it is necessary to answer all the questions.</Aviso>
+		<Iniciar>Start</Iniciar>
+	</Bienvenido>
+	<Archivo>
+		<Texto>Download csv file</Texto>	
+	</Archivo>
+</Documento>

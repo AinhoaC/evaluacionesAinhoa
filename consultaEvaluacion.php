@@ -3,6 +3,14 @@ require_once "funciones.php";
 
 session_start();
 
+//cargamos los xml correspondientes
+if($_SESSION["idioma"] == 'es'){
+    $documento=simplexml_load_file("resources/es.xml");
+}
+else{
+    $documento=simplexml_load_file("resources/en.xml");
+}
+
 if(isset( $_SESSION['usuario']) ){
     $usu = $_SESSION['usuario'];
     $nombreUsu = $_SESSION['nombre'];
@@ -10,25 +18,7 @@ if(isset( $_SESSION['usuario']) ){
 }
 
 $conn = conexion();
-
-
 // RECOGEMOS LOS POSIBLES ESTADOS DE UNA EVALUACION
-function cargaEstados ( $conn ) {
-
-    $sql = mysqli_query( $conn, "SELECT idEstado, nombreEstado FROM estados" );
-
-    $filas = mysqli_num_rows( $sql );
-
-    if ( $filas != 0 ) {
-        echo '<option value="0" > Todas </option>';
-        while( $data = mysqli_fetch_array( $sql ) ) {
-           echo '<option id="inputEstado"  value="'; echo $data[0]; echo '">' ; printf( $data[1] ); '</option>';   
-        } // CIERRE WHILE       
-        
-    } else {
-        echo '<script type="text/javascript">alert("Error al obtener los estados");</script>';
-    }//CIERRE IF
-}
 
     $campoNombreEmpresa = "";
     $campoFechaDesde =  "";
@@ -38,8 +28,8 @@ function cargaEstados ( $conn ) {
     if ( isset( $_POST['buscar'] ) ) {
 
         $campoNombreEmpresa = $_POST['inputEmpresa'];
-        $campoFechaDesde = date( 'Y-m-d', strtotime( $_POST['inputDesde'] ) );        
-        $campoFechaHasta = date( 'Y-m-d', strtotime( $_POST['inputHasta'] ) );
+        $campoFechaDesde = formatear_fecha(strtotime( $_POST['inputDesde'] ));        
+        $campoFechaHasta = formatear_fecha(strtotime( $_POST['inputHasta'] ));
         
         if ($campoFechaDesde == "1970-01-01" ) {
              $campoFechaDesde =  "";
@@ -56,10 +46,10 @@ function cargaEstados ( $conn ) {
 
 <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title> Consulta Evaluación </title>
+    <title><?php echo $documento->ConsultaEval->Titulo ?></title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -75,40 +65,50 @@ function cargaEstados ( $conn ) {
 <body>
     <?php include 'menu.php'?>
     <div class="container"> <br>
-        <h1>Consulta Evaluaciones</h1> <br>
+        <h1><?php echo $documento->ConsultaEval->Titulo2 ?></h1> <br>
         <form method="post">
             <div class="row justify-content-around">
                 <div class="form-group col-md-4">
-                    <strong> <label for="inputEmpresa">Empresa:</label> </strong>
+                    <strong> <label for="inputEmpresa"><?php echo $documento->ConsultaEval->Empresa ?></label> </strong>
                     <input type="text" class="form-control" name="inputEmpresa" id="inputEmpresa" maxlength="30" placeholder="Nombre Empresa" value="<?php echo $campoNombreEmpresa; ?>">
                 </div>
 
                 <div class="form-group col-md-4">
                     <!-- Example split danger button -->
-                    <strong> <label for="inputEstado">Estado:</label> </strong>
-                    <select name="inputEstado" id="inputEstado">
-                        <?php cargaEstados( $conn ); 
-                          ?>
-                    </select>
+                    <div style="float:left">
+                        <strong> <label for="inputEstado"><?php echo $documento->ConsultaEval->Estado ?></label> </strong>
+                        <select name="inputEstado" id="inputEstado">
+                            <?php cargaEstados( $conn ); 
+                              ?>
+                        </select>
+                    </div>
+                        <div style="float:left;margin-left:10%">
+                        <strong> <label for="inputTipoProceso"><?php echo $documento->ConsultaEval->Proceso ?></label> </strong>
+                        <select name="inputProceso" id="inputProceso">
+                            <option value='0' selected><?php echo $documento->ConsultaEval->Todas ?></option>
+                            <?php cargaProcesos( $conn ); 
+                              ?>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             <!-- fila 2 -->
             <div class="row justify-content-around">
                 <div class="form-group col-md-4">
-                    <strong> <label for="inputDesde">Fecha desde:</label>  </strong>
+                    <strong> <label for="inputDesde"><?php echo $documento->ConsultaEval->FechaDesde ?></label>  </strong>
                     <input type="date" class="form-control" id="inputDesde" name="inputDesde" value="<?php echo $campoFechaDesde; ?>">
                 </div>
 
                 <div class="form-group col-md-4">
-                    <strong> <label for="inputHasta">Fecha hasta:</label> </strong>
+                    <strong> <label for="inputHasta"><?php echo $documento->ConsultaEval->FechaHasta ?></label> </strong>
                     <input type="date"  class="form-control" id="inputHasta" name="inputHasta" value="<?php echo $campoFechaHasta; ?>">
                 </div>
             </div>
 
             <div class="row justify-content-around">
                 <div class="form-group col-md-4">
-                    <input class="btn btnBuscar" id="submit" type="submit" name="buscar" value="BUSCAR">
+                    <input class="btn btnBuscar" id="submit" type="submit" name="buscar" value="<?php echo $documento->ConsultaEval->Buscar ?>">
                 </div>
             </div>
         </form>
@@ -118,9 +118,9 @@ function cargaEstados ( $conn ) {
         if ( isset( $_POST['buscar'] ) ) {
             $empresa = $_POST['inputEmpresa'];
             $estado = $_POST['inputEstado'];
-            $fDesde = date( 'Y-m-d', strtotime( $_POST['inputDesde'] ) );
-            $fHasta = date( 'Y-m-d', strtotime( $_POST['inputHasta'] ) );
-            $estado = $_POST['inputEstado'];
+            $fDesde = formatear_fecha( strtotime( $_POST['inputDesde'] ));
+            $fHasta = formatear_fecha(strtotime( $_POST['inputHasta'] ));
+            $proceso = $_POST['inputProceso'];
 
             $sqlquery = "SELECT evaluaciones.idEvaluacion, evaluaciones.idTipoProceso, evaluaciones.codEvaluacion, evaluaciones.nombreEmpresa, evaluaciones.fechaDesde, evaluaciones.fechaHasta, estados.nombreEstado, evaluaciones.idEstadoEval
             FROM evaluaciones 
@@ -140,21 +140,22 @@ function cargaEstados ( $conn ) {
 
                 } else {
                     $sqlquery .= " AND evaluaciones.fechaDesde >= '$fDesde'";
-                }                 
-                           
-            } else if($fHasta != "1970-01-01" &&  $fDesde == "1970-01-01") {
+                }
+            } //cierre $fDesde
+
+            //Cambio Asier fecha_hasta
+            else if($fHasta != "1970-01-01" &&  $fDesde == "1970-01-01"){
                 $sqlquery .= " AND evaluaciones.fechaHasta <= '$fHasta'";
             }
-            
-             
-            
             
             if ($estado != 0) {
                 $sqlquery.= " AND evaluaciones.idEstadoEval = $estado";
             } 
-            
+
+            if($proceso != 0){
+              $sqlquery.= " AND evaluaciones.idTipoProceso = $proceso";  
+            }
             $sqlquery .= " ORDER BY evaluaciones.idEvaluacion ASC";
-            
             //print ($sqlquery);
                 
             $sql = mysqli_query( $conn, $sqlquery );
@@ -227,9 +228,10 @@ function cargaEstados ( $conn ) {
     </script>    
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/miscript.js"></script>
 </body>
 
